@@ -5,22 +5,23 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quick Astro Charts</title>
-  <style>
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      padding: 0;
-    }
-    #chart > svg {
-      width: auto;
-      height: 99vmin;
-    }
-  </style>
 </head>
 <body>
-  <div id="chart"></div>
+  <div id="container">
+    <div id="left-panel">
+      <ul id="settings">
+        <li><span data-prop="time"></span></li>
+        <li><a data-prop="place" target="_blank" rel="noreferrer" href=""></a></li>
+        <li><span data-prop="mode"></span></li>
+        <li><span data-prop="type"></span></li>
+        <li><span data-prop="zodiac"></span></li>
+        <li><span data-prop="houseSystem"></span></li>
+      </ul>
+    </div>
+    <div id="chart"></div>
+    <div id="right-panel">
+      <p id="copy">&copy; 2022 <a href="mailto:osdev0@gmail.com">Ilya I</a></p>
+    </div>
+  </div>
 </body>
 </html>

@@ -72,6 +72,7 @@ export function calculate(options) {
   });
 
   return {
+    horoscope,
     data: { planets, cusps },
   };
 }

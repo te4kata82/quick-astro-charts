@@ -5,9 +5,11 @@
  * @returns {object} lat,lng
  */
 export async function getCurrentLocation() {
-  function parseLocation(str) {
-    const loc = str.split(',');
+  function parseLocation(data) {
+    const loc = data.loc.split(',');
     return {
+      country: data.country,
+      city: data.city ?? data.region,
       latitude: Number(loc[0]),
       longitude: Number(loc[1]),
     };
@@ -16,7 +18,7 @@ export async function getCurrentLocation() {
     let ipInfo = {};
     if (sessionStorage.qacIpInfo) {
       ipInfo = JSON.parse(sessionStorage.qacIpInfo);
-      return parseLocation(ipInfo.loc);
+      return parseLocation(ipInfo);
     }
     const res = await fetch('https://ipinfo.io/?token=5f6d5f01c062a5', {
       headers: {
@@ -28,7 +30,7 @@ export async function getCurrentLocation() {
       ipInfo[p] = json[p];
     }
     sessionStorage.qacIpInfo = JSON.stringify(ipInfo);
-    return parseLocation(ipInfo.loc);
+    return parseLocation(ipInfo);
   } catch (e) {
     alert(`Location autodetection error: ${e}`);
     throw e;
@@ -43,6 +45,7 @@ export function getCurrentDate() {
     date: now.getDate(),
     hour: now.getHours(),
     minute: now.getMinutes(),
+    second: now.getSeconds(),
   };
 }
 
@@ -62,13 +65,14 @@ export async function getCurrentOrigin() {
  *  {object} origin,  // See src/processor.js
  *    settings: {
  *      {string} mode = one of the following: ['horoscope','cosmogram']
+ *      {string} type = one of the following: ['radix','transit']
  *    }
  *  }
  */
 export async function getOptions(paramsString) {
   const searchParams = new URLSearchParams(paramsString);
   let origin = {};
-  const settings = {};
+  const settings = { type: 'radix' };
   for (const [k,v] of searchParams) {
     if (['year','month','date','hour','minute','latitude','longitude'].includes(k)) {
       origin[k] = Number(v);

@@ -58,6 +58,7 @@ a {
   background-repeat: no-repeat;
   background-size: contain;
   text-transform: capitalize;
+  vertical-align: middle;
   padding-left: 1.3em;
 }
 

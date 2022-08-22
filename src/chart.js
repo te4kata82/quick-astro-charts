@@ -74,7 +74,16 @@ export function draw(data, settings) {
     ...data,
     cusps: isCosmogram(settings) ? DEFAULT_CUSPS : data.cusps,
   });
-  // radix.addPointsOfInterest({ As: [asc], Mc: [mc], Ds: [desc], Ic: [ic] });
+  // Aspect calculation
+  // default is planet to planet, but it is possible add some important points:
+  if (!isCosmogram(settings)) {
+    radix.addPointsOfInterest({
+      "As":[data.cusps[0]],
+      "Ic":[data.cusps[3]],
+      "Ds":[data.cusps[6]],
+      "Mc":[data.cusps[9]],
+    });
+  }
   radix.aspects();
 
   console.log("radix:");

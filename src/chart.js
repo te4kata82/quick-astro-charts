@@ -86,8 +86,8 @@ export function draw(data, settings) {
   }
   radix.aspects();
 
-  console.log("radix:");
-  console.dir(radix);
+  // console.log("radix:");
+  // console.dir(radix);
 
   if (settings.bg) {
     window.document.body.style.background = `#${settings.bg}`;

@@ -37,7 +37,7 @@ export async function getCurrentLocation() {
   }
 }
 
-export function getCurrentDate() {
+export function getCurrentTime() {
   const now = new Date();
   return {
     year: now.getFullYear(),
@@ -46,12 +46,13 @@ export function getCurrentDate() {
     hour: now.getHours(),
     minute: now.getMinutes(),
     second: now.getSeconds(),
+    isCurrentTime: true,
   };
 }
 
 export async function getCurrentOrigin() {
   return {
-    ...getCurrentDate(),
+    ...getCurrentTime(),
     ...(await getCurrentLocation()),
   };
 }
@@ -88,7 +89,7 @@ export async function getOptions(paramsString) {
     Object.assign(origin, await getCurrentLocation());
   }
   if (!origin.year && !origin.month && !origin.date) {
-    Object.assign(origin, getCurrentDate());
+    Object.assign(origin, getCurrentTime());
   }
   if (!origin.hour && !origin.minute) {
     if (!settings.mode) settings.mode = 'cosmogram';

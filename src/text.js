@@ -13,9 +13,9 @@ export function init() {
 }
 
 export function display({ horoscope }, options) {
+  displayTime({ horoscope });
   elements.mode.textContent = options.settings.mode;
   elements.type.textContent = options.settings.type;
-  elements.time.textContent = horoscope.origin.localTimeFormatted.replace('T', ' ');
   const coord = [
     horoscope.origin.latitude,
     horoscope.origin.longitude,
@@ -30,4 +30,8 @@ export function display({ horoscope }, options) {
   elements.houseSystem.parentElement.style.display = isCosmogram(options.settings) ?
     'none' : 'list-item';
   elements.houseSystem.textContent = horoscope._houseSystem;
+}
+
+export function displayTime({ horoscope }) {
+  elements.time.textContent = horoscope.origin.localTimeFormatted.replace('T', ' ');
 }

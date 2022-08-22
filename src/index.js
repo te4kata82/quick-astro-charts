@@ -1,8 +1,10 @@
 import { calculate } from "./processor";
 import * as chart from "./chart";
 import * as text from "./text";
-import { getOptions } from "./utils";
+import { getOptions, toggleSpinner } from "./utils";
 
+import "./styles/base.css";
+import "./styles/spinner.css";
 import "./styles/chart.css";
 
 (async () => {
@@ -20,5 +22,7 @@ import "./styles/chart.css";
 
   chart.init(options.settings);
 
-  chart.draw(result.data, options.settings);  
+  chart.draw(result.data, options.settings);
+
+  toggleSpinner();
 })();

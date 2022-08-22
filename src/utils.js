@@ -101,3 +101,15 @@ export async function getOptions(paramsString) {
 export function isCosmogram(settings) {
   return settings.mode === 'cosmogram';
 }
+
+export function toggleSpinner() {
+  const spinner = document.getElementsByClassName('spinner')[0];
+  const container = document.getElementById('container');
+  if (spinner.classList.contains('hidden')) {
+    spinner.classList.remove('hidden');
+    container.classList.add('hidden');
+  } else {
+    spinner.classList.add('hidden');
+    container.classList.remove('hidden');
+  }
+}

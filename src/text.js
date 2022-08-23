@@ -1,6 +1,21 @@
-import { isCosmogram } from "./utils";
+import { isCosmogram, isTransit } from "./utils";
 
 let elements = {};
+
+function formatPlace(data, origin) {
+  const coord = [
+    data.horoscope.origin.latitude,
+    data.horoscope.origin.longitude,
+  ].join(',');
+  const place = origin.country || origin.city ? [
+    origin.city,
+    origin.country,
+  ].join(', ') : '';
+  return {
+    name: place || coord,
+    link: `https://google.com/maps?q=${coord}`,
+  };
+}
 
 export function init() {
   const settingsEl = document.getElementById('settings');
@@ -12,26 +27,34 @@ export function init() {
   });
 }
 
-export function display({ horoscope }, options) {
-  displayTime({ horoscope });
-  elements.mode.textContent = options.settings.mode;
-  elements.type.textContent = options.settings.type;
-  const coord = [
-    horoscope.origin.latitude,
-    horoscope.origin.longitude,
-  ].join(',');
-  const place = options.origin.country || options.origin.city ? [
-    options.origin.city,
-    options.origin.country,
-  ].join(', ') : '';
-  elements.place.textContent = place || coord;
-  elements.place.href = `https://google.com/maps?q=${coord}`;
+export function display(dataRadix, dataTransit, origin, transit, settings) {
+  const { horoscope } = dataRadix;
+  displayTime(dataRadix, dataTransit, settings);
+  elements.mode.textContent = settings.mode;
+  elements.type.textContent = settings.type;
+  const originPlace = formatPlace(dataRadix, origin);
+  elements.place.textContent = originPlace.name;
+  elements.place.href = originPlace.link;
+  if (isTransit(settings)) {
+    const transitPlace = formatPlace(dataTransit, transit);
+    elements.transitPlace.textContent = transitPlace.name;
+    elements.transitPlace.href = transitPlace.link;
+    elements.transitPlace.parentElement.style.display = 'list-item';
+  } else {
+    elements.transitPlace.parentElement.style.display = 'none';
+  }
   elements.zodiac.textContent = horoscope._zodiac;
-  elements.houseSystem.parentElement.style.display = isCosmogram(options.settings) ?
+  elements.houseSystem.parentElement.style.display = isCosmogram(settings) ?
     'none' : 'list-item';
   elements.houseSystem.textContent = horoscope._houseSystem;
 }
 
-export function displayTime({ horoscope }) {
-  elements.time.textContent = horoscope.origin.localTimeFormatted.replace('T', ' ');
+export function displayTime(dataRadix, dataTransit, settings) {
+  elements.time.textContent = dataRadix.horoscope.origin.localTimeFormatted.replace('T', ' ');
+  if (isTransit(settings)) {
+    elements.transitTime.textContent = dataTransit.horoscope.origin.localTimeFormatted.replace('T', ' ');
+    elements.transitTime.parentElement.style.display = 'list-item';
+  } else {
+    elements.transitTime.parentElement.style.display = 'none';
+  }
 }

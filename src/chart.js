@@ -1,5 +1,5 @@
 import "./../lib/astrochart";
-import { isCosmogram } from "./utils";
+import { isCosmogram, isTransit } from "./utils";
 
 let chart;
 
@@ -34,8 +34,6 @@ const DEFAULT_SETTINGS = {
   }
 };
 
-const DEFAULT_CUSPS = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330];
-
 function getChartSettings(settings) {
   return {
     ...DEFAULT_SETTINGS,
@@ -43,6 +41,11 @@ function getChartSettings(settings) {
         {
           SYMBOL_AXIS_FONT_COLOR: 'transparent',
           SHIFT_IN_DEGREES: 270,
+        } : {}),
+    ...(isTransit(settings) ?
+        {
+          MARGIN: 80,
+          SYMBOL_SCALE: 0.8,
         } : {}),
     ...(settings.stroke ?
         {
@@ -68,28 +71,32 @@ export function init(settings) {
   console.dir(chart);  
 }
 
-export function draw(data, settings) {
+export function draw(dataRadix, dataTransit, settings) {
   if (!chart) throw Error("Chart not initialized");
-  const radix = chart.radix({
-    ...data,
-    cusps: isCosmogram(settings) ? DEFAULT_CUSPS : data.cusps,
-  });
+  const radix = chart.radix(dataRadix);
+  // console.log("radix:");
+  // console.dir(radix);
+
   // Aspect calculation
   // default is planet to planet, but it is possible add some important points:
   if (!isCosmogram(settings)) {
     radix.addPointsOfInterest({
-      "As":[data.cusps[0]],
-      "Ic":[data.cusps[3]],
-      "Ds":[data.cusps[6]],
-      "Mc":[data.cusps[9]],
+      "As":[dataRadix.cusps[0]],
+      "Ic":[dataRadix.cusps[3]],
+      "Ds":[dataRadix.cusps[6]],
+      "Mc":[dataRadix.cusps[9]],
     });
   }
-  radix.aspects();
 
-  // console.log("radix:");
-  // console.dir(radix);
+  if (isTransit(settings)) {
+    const transit = radix.transit(dataTransit);
+    transit.aspects();
+  } else {
+    radix.aspects();
+  }
 
   if (settings.bg) {
     window.document.body.style.background = `#${settings.bg}`;
+    window.document.body.style.color = `#${settings.stroke}`;
   }
 }

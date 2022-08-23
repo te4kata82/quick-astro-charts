@@ -71,36 +71,64 @@ export async function getCurrentOrigin() {
  *  }
  */
 export async function getOptions(paramsString) {
+  const ORIGIN_KEYS = ['year','month','date','hour','minute','latitude','longitude'];
+  const TRANSIT_KEYS = ['tyear','tmonth','tdate','thour','tminute','tlatitude','tlongitude'];
+  const SETTINGS_KEYS = ['mode','type','stroke','bg','houseSystem','zodiac'];
   const searchParams = new URLSearchParams(paramsString);
-  let origin = {};
+  let origin = {}, transit = {};
   const settings = { type: 'radix' };
   for (const [k,v] of searchParams) {
-    if (['year','month','date','hour','minute','latitude','longitude'].includes(k)) {
+    if (ORIGIN_KEYS.includes(k)) {
       origin[k] = Number(v);
     }
-    if (['mode','stroke','bg','houseSystem','zodiac'].includes(k)) {
+    if (TRANSIT_KEYS.includes(k)) {
+      transit[k.slice(1)] = Number(v);
+    }
+    if (SETTINGS_KEYS.includes(k)) {
       settings[k] = v;
     }
   }
-  if (Object.keys(origin).length === 0) {
-    origin = await getCurrentOrigin();
+  if (Object.keys(origin).length < ORIGIN_KEYS.length) {
+    if (Object.keys(origin).length === 0) {
+      origin = await getCurrentOrigin();
+    } else {
+      if (!origin.latitude && !origin.longitude) {
+        Object.assign(origin, await getCurrentLocation());
+      }
+      if (!origin.year && !origin.month && !origin.date) {
+        Object.assign(origin, getCurrentTime());
+      }
+      if (!origin.hour && !origin.minute) {
+        if (!settings.mode) settings.mode = 'cosmogram';
+        Object.assign(origin, { hour: 12, minute: 0 });
+      }
+    }
   }
-  if (!origin.latitude && !origin.longitude) {
-    Object.assign(origin, await getCurrentLocation());
-  }
-  if (!origin.year && !origin.month && !origin.date) {
-    Object.assign(origin, getCurrentTime());
-  }
-  if (!origin.hour && !origin.minute) {
-    if (!settings.mode) settings.mode = 'cosmogram';
-    Object.assign(origin, { hour: 12, minute: 0 });
+  if (Object.keys(transit).length < TRANSIT_KEYS.length && settings.type === 'transit') {
+    if (Object.keys(transit) === 0) {
+      transit = await getCurrentOrigin();
+    } else {
+      if (!transit.latitude && !transit.longitude) {
+        Object.assign(transit, await getCurrentLocation());
+      }
+      if (!transit.year && !transit.month && !transit.date) {
+        Object.assign(transit, getCurrentTime());
+      }
+      if (!transit.hour && !transit.minute) {
+        Object.assign(transit, { hour: 12, minute: 0 });
+      }
+    }
   }
   if (!settings.mode) settings.mode = 'horoscope';
-  return { origin, settings };
+  return { origin, transit, settings };
 }
 
 export function isCosmogram(settings) {
   return settings.mode === 'cosmogram';
+}
+
+export function isTransit(settings) {
+  return settings.type === 'transit';
 }
 
 export function toggleSpinner() {

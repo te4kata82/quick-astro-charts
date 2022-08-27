@@ -1,0 +1,69 @@
+#settings {
+  position: fixed;
+  margin: auto;
+  background: var(--primary-bg-color);
+  border-width: 2px;
+  border: 2px solid var(--lighter-fg-color);
+  border-radius: .5em;
+  max-width: 95vw;
+}
+
+#settings form {
+  display: flex;
+  flex-direction: column;
+  gap: .5em;
+  padding: 1.5em 2em 1em 2em;
+}
+
+#settings section {
+  display: flex;
+  gap: .5em;
+}
+
+#settings footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: .5em;
+  gap: .5em;
+}
+
+#settings section.primary fieldset:nth-child(4) {
+  flex-grow: 1;
+}
+
+#settings section.aux fieldset {
+  flex-direction: row;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+#settings button.geolocate {
+  margin-top: 0.6em;
+  padding: 0;
+  width: 3em;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+#settings button.geolocate svg {
+  max-width: 3em;
+  max-height: 3em;
+}
+
+#settings input.place {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#settings button.close {
+  position: absolute;
+  border: none;
+  padding: .025em 0.1em 0 0.1em;
+  top: 1vmin;
+  right: 1vmin;
+  font-size: 2em;
+  line-height: .8em;
+}

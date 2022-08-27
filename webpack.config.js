@@ -2,6 +2,7 @@ var HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const path = require("path");
+const pkg = require("./package.json");
 
 module.exports = {
   entry: {
@@ -18,6 +19,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: "index.html",
       template: "./index.html",
+      version: pkg.version,
     }),
   ],
   module: {

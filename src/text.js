@@ -18,8 +18,8 @@ function formatPlace(data, origin) {
 }
 
 export function init() {
-  const settingsEl = document.getElementById('settings');
-  settingsEl.querySelectorAll('[data-prop]').forEach(el => {
+  const paramsEl = document.getElementById('parameters');
+  paramsEl.querySelectorAll('[data-prop]').forEach(el => {
     if (elements[el.dataset.prop]) {
       throw Error(`Duplicate element: ${el.dataset.prop}`);
     }

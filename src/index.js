@@ -1,16 +1,20 @@
 import { calculate } from "./processor";
 import * as chart from "./chart";
 import * as text from "./text";
-import { getCurrentTime, getOptions, isTransit, toggleSpinner } from "./utils";
+import * as configurator from "./configurator";
+import { getCurrentTime, isTransit, toggleSpinner } from "./utils";
 
 import "./styles/base.css";
 import "./styles/spinner.css";
 import "./styles/chart.css";
+import "./styles/settings.css";
 
 const UPDATE_INTERVAL = 1000;
 
 (async () => {
-  const { origin, transit, settings } = await getOptions(window.location.search);
+  configurator.init();
+
+  const { origin, transit, settings } = await configurator.getParameters(window.location.search);
   console.log("origin:");
   console.dir(origin);
   console.log("settings:");

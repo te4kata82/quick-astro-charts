@@ -1,3 +1,13 @@
+#spinner-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  background: var(--primary-bg-color);
+}
+
 .spinner {
   display: inline-block;
   position: relative;
@@ -9,7 +19,7 @@
   position: absolute;
   width: 6px;
   height: 6px;
-  background: #90A4AE;
+  background: var(--lighter-fg-color);
   border-radius: 50%;
   animation: spinner 1.2s linear infinite;
 }

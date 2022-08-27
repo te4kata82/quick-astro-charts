@@ -57,70 +57,47 @@ export async function getCurrentOrigin() {
   };
 }
 
-/**
- * Returns initialization settings/options with defaults from URL
- * and other sources
- * 
- * @param {string} paramsString window.location.search
- * @returns {Promise} Promise of options with such format: {
- *  {object} origin,  // See src/processor.js
- *    settings: {
- *      {string} mode = one of the following: ['horoscope','cosmogram']
- *      {string} type = one of the following: ['radix','transit']
- *    }
- *  }
- */
-export async function getOptions(paramsString) {
-  const ORIGIN_KEYS = ['year','month','date','hour','minute','latitude','longitude'];
-  const TRANSIT_KEYS = ['tyear','tmonth','tdate','thour','tminute','tlatitude','tlongitude'];
-  const SETTINGS_KEYS = ['mode','type','stroke','bg','houseSystem','zodiac'];
-  const searchParams = new URLSearchParams(paramsString);
-  let origin = {}, transit = {};
-  const settings = { type: 'radix' };
-  for (const [k,v] of searchParams) {
-    if (ORIGIN_KEYS.includes(k)) {
-      origin[k] = Number(v);
-    }
-    if (TRANSIT_KEYS.includes(k)) {
-      transit[k.slice(1)] = Number(v);
-    }
-    if (SETTINGS_KEYS.includes(k)) {
-      settings[k] = v;
-    }
+export function getSearchParams() {
+  const searchParams = new URLSearchParams(window.location.search);
+  return Object.fromEntries(searchParams.entries());
+}
+
+export function parseDate(str) {
+  const pieces = str.split('-');
+  const month = Number.parseInt(pieces[1]);
+  const date = {
+    year: Number.parseInt(pieces[0]),
+    month: Number.isInteger(month) && month !== 0 ? month - 1 : null,
+    date: Number.parseInt(pieces[2]),
+  };
+  if (pieces.length !== 3 || Object.values(date).some(v => !Number.isInteger(v))) {
+    throw Error(`Cannot parse date: ${str}`);
   }
-  if (Object.keys(origin).length < ORIGIN_KEYS.length) {
-    if (Object.keys(origin).length === 0) {
-      origin = await getCurrentOrigin();
-    } else {
-      if (!origin.latitude && !origin.longitude) {
-        Object.assign(origin, await getCurrentLocation());
-      }
-      if (!origin.year && !origin.month && !origin.date) {
-        Object.assign(origin, getCurrentTime());
-      }
-      if (!origin.hour && !origin.minute) {
-        if (!settings.mode) settings.mode = 'cosmogram';
-        Object.assign(origin, { hour: 12, minute: 0 });
-      }
-    }
+  return date;
+}
+
+export function parseTime(str) {
+  const pieces = str.split(':');
+  const time = {
+    hour: Number.parseInt(pieces[0]),
+    minute: Number.parseInt(pieces[1]),
+  };
+  if (pieces.length !== 2 || Object.values(time).some(v => !Number.isInteger(v))) {
+    throw Error(`Cannot parse time: ${str}`);
   }
-  if (Object.keys(transit).length < TRANSIT_KEYS.length && settings.type === 'transit') {
-    if (Object.keys(transit) === 0) {
-      transit = await getCurrentOrigin();
-    } else {
-      if (!transit.latitude && !transit.longitude) {
-        Object.assign(transit, await getCurrentLocation());
-      }
-      if (!transit.year && !transit.month && !transit.date) {
-        Object.assign(transit, getCurrentTime());
-      }
-      if (!transit.hour && !transit.minute) {
-        Object.assign(transit, { hour: 12, minute: 0 });
-      }
-    }
+  return time;
+}
+
+export function parsePlace(str) {
+  const pieces = str.split(',');
+  const place = {
+    latitude: Number.parseFloat(pieces[0]),
+    longitude: Number.parseFloat(pieces[1]),
+  };
+  if (pieces.length !== 2 || Object.values(place).some(v => !Number.isFinite(v))) {
+    throw Error(`Cannot parse place: ${str}`);
   }
-  if (!settings.mode) settings.mode = 'horoscope';
-  return { origin, transit, settings };
+  return place;
 }
 
 export function isCosmogram(settings) {
@@ -132,13 +109,20 @@ export function isTransit(settings) {
 }
 
 export function toggleSpinner() {
-  const spinner = document.getElementsByClassName('spinner')[0];
-  const container = document.getElementById('container');
+  const spinner = document.getElementById('spinner-overlay');
   if (spinner.classList.contains('hidden')) {
     spinner.classList.remove('hidden');
-    container.classList.add('hidden');
   } else {
     spinner.classList.add('hidden');
-    container.classList.remove('hidden');
+  }
+}
+
+export function applyTheme(fgColor, bgColor) {
+  if (fgColor) {
+    document.documentElement.style.setProperty('--primary-fg-color', fgColor);
+    document.documentElement.style.setProperty('--lighter-fg-color', fgColor);
+  }
+  if (bgColor) {
+    document.documentElement.style.setProperty('--primary-bg-color', bgColor);
   }
 }

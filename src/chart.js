@@ -1,5 +1,5 @@
 import "./../lib/astrochart";
-import { isCosmogram, isTransit } from "./utils";
+import { applyTheme, isCosmogram, isTransit } from "./utils";
 
 let chart;
 
@@ -50,13 +50,13 @@ function getChartSettings(settings) {
     ...(settings.stroke ?
         {
           STROKE_ONLY: true,
-          CIRCLE_COLOR: `#${settings.stroke}`,
-          LINE_COLOR: `#${settings.stroke}`,
-          CUSPS_FONT_COLOR: `#${settings.stroke}`,
+          CIRCLE_COLOR: settings.stroke,
+          LINE_COLOR: settings.stroke,
+          CUSPS_FONT_COLOR: settings.stroke,
           COLOR_BACKGROUND: 'transparent',
-          POINTS_COLOR: `#${settings.stroke}`,
-          SIGNS_COLOR: `#${settings.stroke}`,
-          SYMBOL_AXIS_FONT_COLOR: `#${settings.stroke}`,
+          POINTS_COLOR: settings.stroke,
+          SIGNS_COLOR: settings.stroke,
+          SYMBOL_AXIS_FONT_COLOR: settings.stroke,
         } : {}),
   }
 }
@@ -79,7 +79,7 @@ export function draw(dataRadix, dataTransit, settings) {
 
   // Aspect calculation
   // default is planet to planet, but it is possible add some important points:
-  if (!isCosmogram(settings)) {
+  if (settings.aspectsToAngulars && !isCosmogram(settings)) {
     radix.addPointsOfInterest({
       "As":[dataRadix.cusps[0]],
       "Ic":[dataRadix.cusps[3]],
@@ -95,8 +95,7 @@ export function draw(dataRadix, dataTransit, settings) {
     radix.aspects();
   }
 
-  if (settings.bg) {
-    window.document.body.style.background = `#${settings.bg}`;
-    window.document.body.style.color = `#${settings.stroke}`;
+  if (settings.bg || settings.stroke) {
+    applyTheme(settings.stroke, settings.bg);
   }
 }

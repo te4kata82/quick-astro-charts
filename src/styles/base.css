@@ -1,3 +1,74 @@
+:root {
+  --primary-fg-color: #263238;
+  --lighter-fg-color: #90A4AE;
+  --primary-bg-color: #FFFFFF;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  color: var(--primary-fg-color);
+  background-color: var(--primary-bg-color);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2.5vmin;
+}
+
+a {
+  color: inherit;
+}
+
+ul, p {
+  margin: 0;
+}
+
+button {
+  border: 1px solid var(--primary-fg-color);
+  border-radius: .25rem;
+  background-color: var(--primary-bg-color);
+  color: var(--primary-fg-color);
+  padding: .5em 1em;
+  font-size: inherit;
+}
+
+button:hover {
+  background-color: var(--primary-fg-color);
+  color: var(--primary-bg-color);
+}
+
+button:disabled {
+  background-color: inherit;
+  color: inherit;
+  opacity: .5;
+}
+
+fieldset {
+  border: 1px solid var(--lighter-fg-color);
+  border-radius: .5em;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+legend {
+  color: var(--lighter-fg-color);
+}
+
+label {
+  display: block;
+}
+
+select, input {
+  font-size: inherit;
+  border: 1px solid;
+  border-radius: 0.25em;
+  padding: 0.1em 0.25em;
+}
+
 .hidden {
   display: none !important;
 }

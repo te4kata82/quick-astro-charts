@@ -1,4 +1,4 @@
-import { getCurrentLocation, getCurrentOrigin, getCurrentTime, getSearchParams, parseDate, parsePlace, parseTime, toggleSpinner } from "./utils";
+import { disableControls, displayLoader, displayLoadingButton, getCurrentLocation, getCurrentOrigin, getCurrentTime, getSearchParams, parseDate, parsePlace, parseTime, triggerEvent } from "./utils";
 
 const DEFAULT_SETTINGS = {
   houseSystem: "placidus",
@@ -10,13 +10,13 @@ const DEFAULT_SETTINGS = {
   aspectsToAngulars: false,
 };
 
-let settingsEl, settingsButtonEl;
+let settingsEl, settingsButtonEl, onChange;
 
 /**
- * Returns initialization settings/options with defaults from URL
- * and other sources
+ * Returns initialization settings/options with defaults from
+ * an entries array and other sources
  * 
- * @param {string} paramsString window.location.search
+ * @param {array} entries string-keyed property pairs
  * @returns {Promise} Promise of options with such format: {
  *  {object} origin = with keys: ['year','month','date','hour','minute','latitude','longitude'],
  *  {object} transit = with keys: ['tyear','tmonth','tdate','thour','tminute','tlatitude','tlongitude'],
@@ -31,11 +31,10 @@ let settingsEl, settingsButtonEl;
  *    }
  *  }
  */
- export async function getParameters(paramsString) {
-  const searchParams = new URLSearchParams(paramsString);
+ export async function getParameters(entries) {
   let origin = {}, transit = {};
   const settings = { ...DEFAULT_SETTINGS };
-  for (const [k,v] of searchParams) {
+  for (const [k,v] of entries) {
     switch (k) {
       case 'date': Object.assign(origin, parseDate(v)); break;
       case 'time': Object.assign(origin, parseTime(v)); break;
@@ -84,10 +83,12 @@ let settingsEl, settingsButtonEl;
 function fillForm() {
   const params = getSearchParams();
   settingsEl.querySelectorAll('[name]').forEach(el => {
+    if (el.checked) triggerEvent(el, 'change');
     if (!(el.name in params)) return;
     if (el.type === 'radio') {
       if (el.value === params[el.name]) {
         el.checked = true;
+        triggerEvent(el, 'change');
       }
     } else if (el.type === 'checkbox') {
       el.checked = !!params[el.name];
@@ -111,11 +112,18 @@ function formDataToParams(formData) {
 }
 
 function onGeolocate(e) {
+  const button = e.currentTarget;
   e.preventDefault();
-  const placeEl = e.currentTarget.parentElement.querySelector('[name="place"]');
+  displayLoadingButton(button, true);
+  const placeInput = button.parentElement.querySelector('input.place');
   navigator.geolocation.getCurrentPosition((position) => {
     const coords = [position.coords.latitude, position.coords.longitude].join(',');
-    placeEl.value = coords;
+    placeInput.value = coords;
+    displayLoadingButton(button, false);
+  }, (err) => {
+    console.error(err);
+    alert(err.message);
+    displayLoadingButton(button, false);
   });
 }
 
@@ -130,23 +138,58 @@ function onClose() {
   settingsButtonEl.disabled = false;
 }
 
-function onSubmit(e) {
-  e.preventDefault();
-  toggleSpinner();
-  const formData = new FormData(e.target);
-  const paramsObj = formDataToParams(formData);
-  const searchParams = new URLSearchParams(paramsObj);
-  // console.dir({ formData, paramsObj, searchParams: searchParams.toString() });
-  window.location.search = searchParams.toString();
+function onReset() {
+  setTimeout(() => {
+    settingsEl.querySelectorAll('[name]').forEach(el => {
+      if (el.checked) triggerEvent(el, 'change');
+    });
+  }, 0);
 }
 
-export function init() {
+function onModeChange(e) {
+  disableControls(
+    [
+      settingsEl.querySelector('[name="houseSystem"]').parentElement,
+      settingsEl.querySelector('[name="aspectsToAngulars"]').parentElement,
+    ],
+    e.target.value === 'cosmogram'
+  );
+}
+
+function onTypeChange(e) {
+  disableControls(
+    settingsEl.querySelector('section.transit'),
+    e.target.value !== 'transit'
+  );
+}
+
+async function onSubmit(e) {
+  e.preventDefault();
+  displayLoader(true);
+  const formData = new FormData(e.target);
+  const paramsObj = formDataToParams(formData);
+  const paramsEntries = Object.entries(paramsObj);
+  const searchParams = new URLSearchParams(paramsObj);
+  history.pushState(paramsEntries, '', `?${searchParams}`);
+  onChange(await getParameters(paramsEntries));
+  onClose();
+}
+
+async function onPopState(e) {
+  displayLoader(true);
+  onChange(await getParameters(e.state ?? []));
+}
+
+export function init(changeHandler) {
+  onChange = changeHandler;
   settingsEl = document.getElementById('settings');
   settingsButtonEl = document.querySelector('button.settings');
   settingsButtonEl.addEventListener('click', onOpen);
   settingsEl.querySelector('form').addEventListener('submit', onSubmit);
   settingsEl.querySelector('button.close').addEventListener('click', onClose);
-  settingsEl.querySelectorAll('button.geolocate').forEach(el => {
-    el.addEventListener('click', onGeolocate);
-  });
+  settingsEl.querySelector('button.reset').addEventListener('click', onReset);
+  settingsEl.querySelectorAll('button.geolocate').forEach(_ => _.addEventListener('click', onGeolocate));
+  settingsEl.querySelectorAll('[name="mode"]').forEach(_ => _.addEventListener('change', onModeChange));
+  settingsEl.querySelectorAll('[name="type"]').forEach(_ => _.addEventListener('change', onTypeChange));
+  window.addEventListener('popstate', onPopState);
 }

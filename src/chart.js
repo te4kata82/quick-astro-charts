@@ -1,12 +1,15 @@
 import "./../lib/astrochart";
-import { applyTheme, isCosmogram, isTransit } from "./utils";
+import { isCosmogram, isTransit } from "./utils";
 
 let chart;
 
 const DEFAULT_SETTINGS = {
-  // SYMBOL_SCALE: 1.2,
+  STROKE_ONLY: false,
+  SYMBOL_SCALE: 1,
   POINTS_TEXT_SIZE: 10,
   MARGIN: 40,
+  SHIFT_IN_DEGREES: 180,
+  COLOR_BACKGROUND: "#FFFFFF",
   POINTS_COLOR: "#263238",
   SIGNS_COLOR: "#263238",
   CIRCLE_COLOR: "#90A4AE",
@@ -37,16 +40,6 @@ const DEFAULT_SETTINGS = {
 function getChartSettings(settings) {
   return {
     ...DEFAULT_SETTINGS,
-    ...(isCosmogram(settings) ?
-        {
-          SYMBOL_AXIS_FONT_COLOR: 'transparent',
-          SHIFT_IN_DEGREES: 270,
-        } : {}),
-    ...(isTransit(settings) ?
-        {
-          MARGIN: 80,
-          SYMBOL_SCALE: 0.8,
-        } : {}),
     ...(settings.stroke ?
         {
           STROKE_ONLY: true,
@@ -58,24 +51,39 @@ function getChartSettings(settings) {
           SIGNS_COLOR: settings.stroke,
           SYMBOL_AXIS_FONT_COLOR: settings.stroke,
         } : {}),
+    ...(isCosmogram(settings) ?
+        {
+          SYMBOL_AXIS_FONT_COLOR: 'transparent',
+          SHIFT_IN_DEGREES: 270,
+        } : {}),
+    ...(isTransit(settings) ?
+        {
+          MARGIN: 80,
+          SYMBOL_SCALE: 0.8,
+        } : {}),
   }
 }
 
-export function init(settings) {
-  console.log("astrology:");
-  console.dir(astrology);
+function areChartSettingsChanged(settings) {
+  return Object.keys(settings).some(key => settings[key] !== astrology[key]);
+}
 
-  const chartSettings = getChartSettings(settings);
+export function init(chartSettings) {
+  if (!chartSettings) return;
+
+  const chartEl = document.getElementById('chart');
+  if (chartEl.children.length > 0) chartEl.replaceChildren();
+
   chart = new astrology.Chart('chart', 600, 600, chartSettings);
-  console.log("chart:");
-  console.dir(chart);  
+  console.debug("astrology.Chart: %o", chart);
 }
 
 export function draw(dataRadix, dataTransit, settings) {
-  if (!chart) throw Error("Chart not initialized");
+  const chartSettings = getChartSettings(settings);
+  if (!chart || areChartSettingsChanged(chartSettings)) {
+    init(chartSettings);
+  }
   const radix = chart.radix(dataRadix);
-  // console.log("radix:");
-  // console.dir(radix);
 
   // Aspect calculation
   // default is planet to planet, but it is possible add some important points:
@@ -93,9 +101,5 @@ export function draw(dataRadix, dataTransit, settings) {
     transit.aspects();
   } else {
     radix.aspects();
-  }
-
-  if (settings.bg || settings.stroke) {
-    applyTheme(settings.stroke, settings.bg);
   }
 }

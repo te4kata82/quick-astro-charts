@@ -108,21 +108,48 @@ export function isTransit(settings) {
   return settings.type === 'transit';
 }
 
-export function toggleSpinner() {
+export function displayLoader(display) {
   const spinner = document.getElementById('spinner-overlay');
-  if (spinner.classList.contains('hidden')) {
+  const hiddenNow = spinner.classList.contains('hidden');
+  if (display && hiddenNow) {
     spinner.classList.remove('hidden');
-  } else {
+  } else if (!display && !hiddenNow) {
     spinner.classList.add('hidden');
   }
 }
 
+export function displayLoadingButton(button, isLoading) {
+  button.disabled = isLoading;
+  if (isLoading && !button.classList.contains('loading')) {
+    button.classList.add('loading');
+  } else if (!isLoading && button.classList.contains('loading')) {
+    button.classList.remove('loading');
+  }
+}
+
+export function disableControls(sections, value) {
+  (Array.isArray(sections) ? sections : [sections]).forEach(section => {
+    section.querySelectorAll('button,[name]').forEach(el => el.disabled = value);
+  });
+}
+
+export function triggerEvent(element, eventName) {
+  const event = new Event(eventName);
+  element.dispatchEvent(event);
+}
+
 export function applyTheme(fgColor, bgColor) {
-  if (fgColor) {
-    document.documentElement.style.setProperty('--primary-fg-color', fgColor);
-    document.documentElement.style.setProperty('--lighter-fg-color', fgColor);
-  }
-  if (bgColor) {
-    document.documentElement.style.setProperty('--primary-bg-color', bgColor);
-  }
+  const isLightColor = (hex) => {
+    const c = hex.substring(1);
+    const rgb = parseInt(c, 16);
+    const r = (rgb >> 16) & 0xff;
+    const g = (rgb >>  8) & 0xff;
+    const b = (rgb >>  0) & 0xff;
+    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return luma > 128;
+  };
+  document.documentElement.style.setProperty('--primary-fg-color', fgColor ?? '#263238');
+  document.documentElement.style.setProperty('--lighter-fg-color', fgColor ?? '#90A4AE');
+  document.documentElement.style.setProperty('--primary-bg-color', bgColor ?? '#FFFFFF');
+  document.documentElement.style.colorScheme = fgColor === bgColor || isLightColor(bgColor) ? 'light' : 'dark';
 }

@@ -6,13 +6,14 @@
   border: 2px solid var(--lighter-fg-color);
   border-radius: .5em;
   max-width: 95vw;
+  z-index: 10;
 }
 
 #settings form {
   display: flex;
   flex-direction: column;
   gap: .5em;
-  padding: 1.5em 2em 1em 2em;
+  padding: 2em 2em 1em 2em;
 }
 
 #settings section {
@@ -53,6 +54,17 @@
   max-height: 3em;
 }
 
+#settings button.geolocate.loading::before {
+  content: "";
+  background-color: var(--primary-fg-color);
+  width: .2em;
+  height: .2em;
+  border-radius: 50%;
+  position: absolute;
+  margin: auto;
+  animation: blink 1s step-start 0s infinite;
+}
+
 #settings input.place {
   width: 100%;
   box-sizing: border-box;
@@ -66,4 +78,10 @@
   right: 1vmin;
   font-size: 2em;
   line-height: .8em;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
 }

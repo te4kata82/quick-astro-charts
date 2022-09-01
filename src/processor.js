@@ -49,8 +49,6 @@ export function calculate(origin, settings) {
     customOrbs: {},
     language: 'en'
   });
-  // console.log("horoscope:");
-  // console.dir(horoscope);
 
   const planets = Object.assign(
     {},

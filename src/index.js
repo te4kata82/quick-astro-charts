@@ -2,7 +2,7 @@ import { calculate } from "./processor";
 import * as chart from "./chart";
 import * as text from "./text";
 import * as configurator from "./configurator";
-import { getCurrentTime, isTransit, toggleSpinner } from "./utils";
+import { applyTheme, displayLoader, getCurrentTime, isTransit } from "./utils";
 
 import "./styles/base.css";
 import "./styles/spinner.css";
@@ -10,32 +10,29 @@ import "./styles/chart.css";
 import "./styles/settings.css";
 
 const UPDATE_INTERVAL = 1000;
+let chartUpdater;
 
-(async () => {
-  configurator.init();
+function run({ origin, transit, settings }) {
+  console.debug("run(%o)", { origin, transit, settings });
+  displayLoader(true);
 
-  const { origin, transit, settings } = await configurator.getParameters(window.location.search);
-  console.log("origin:");
-  console.dir(origin);
-  console.log("settings:");
-  console.dir(settings);
+  if (chartUpdater) {
+    clearInterval(chartUpdater);
+    chartUpdater = null;
+  }
 
   let dataRadix = calculate(origin, settings);
-  console.log("dataRadix:");
-  console.dir(dataRadix);
 
   let dataTransit;
   if (isTransit(settings)) {
     dataTransit = calculate(transit, settings);
   }
 
-  text.init();
   text.display(dataRadix, dataTransit, origin, transit, settings);
-
-  chart.init(settings);
   chart.draw(dataRadix, dataTransit, settings);
 
-  toggleSpinner();
+  applyTheme(settings.stroke, settings.bg);
+  displayLoader(false);
 
   function updateChart(currentTime) {
     if (isTransit(settings)) {
@@ -48,6 +45,18 @@ const UPDATE_INTERVAL = 1000;
   }
 
   if (origin.isCurrentTime || (isTransit(settings) && transit.isCurrentTime)) {
-    setInterval(() => updateChart(getCurrentTime(), settings), UPDATE_INTERVAL);
+    chartUpdater = setInterval(() => updateChart(getCurrentTime(), settings), UPDATE_INTERVAL);
+  }
+}
+
+(async () => {
+  try {
+    text.init();
+    chart.init();
+    configurator.init(run);
+    run(await configurator.getParameters(new URLSearchParams(window.location.search)));
+  } catch (e) {
+    console.error(e);
+    alert(e);
   }
 })();

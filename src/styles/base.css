@@ -2,6 +2,14 @@
   --primary-fg-color: #263238;
   --lighter-fg-color: #90A4AE;
   --primary-bg-color: #FFFFFF;
+  accent-color: var(--primary-fg-color);
+}
+
+:disabled,
+:disabled ~ span {
+  background-color: inherit;
+  color: inherit;
+  opacity: .5;
 }
 
 body {
@@ -21,6 +29,10 @@ a {
   color: inherit;
 }
 
+a:hover {
+  color: var(--primary-fg-color);
+}
+
 ul, p {
   margin: 0;
 }
@@ -34,15 +46,9 @@ button {
   font-size: inherit;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background-color: var(--primary-fg-color);
   color: var(--primary-bg-color);
-}
-
-button:disabled {
-  background-color: inherit;
-  color: inherit;
-  opacity: .5;
 }
 
 fieldset {
@@ -54,19 +60,35 @@ fieldset {
   justify-content: center;
 }
 
-legend {
+legend, input::placeholder {
   color: var(--lighter-fg-color);
 }
 
 label {
   display: block;
+  user-select: none;
 }
 
 select, input {
   font-size: inherit;
+  color: inherit;
+  background-color: inherit;
   border: 1px solid;
   border-radius: 0.25em;
   padding: 0.1em 0.25em;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border-color: transparent;
+  border-radius: .1em;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  width: .8em;
+  height: .8em;
+  padding: 0;
+  margin: 0;
 }
 
 .hidden {

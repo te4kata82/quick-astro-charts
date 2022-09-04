@@ -1,8 +1,10 @@
-# Quick Astro Charts
+# Quick Astro Charts ![GitHub tag](https://img.shields.io/github/v/tag/ilyai/quick-astro-charts.svg?sort=semver)
 
 A webapp for quickly creating and displaying Western astrological charts. The chart is drawn immediately, if the time or place is not specified determines current time and place and updates every second automatically. Optimized for displaying on screens of any size and usage in digital signage. Uses only most established and verified astrology concepts.
 
 The goal is to provide a lightweight, flexible and simple to use app for astrologiers which doesn't require any backend and works entirely in the browser without the need for constant internet connection.
+
+![Screen Shot 2022-09-04 at 19 28 46](https://user-images.githubusercontent.com/1911270/188323024-c4683b03-d90a-48a1-a2c8-0fec33330a5d.png)
 
 ## Features
 

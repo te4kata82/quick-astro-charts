@@ -50,6 +50,6 @@ The following options can be modified by using the settings dialog:
 
 ## Sources
 
-Uses **Circular Natal Horoscope JS** astrological calculations library by @0xStarcat, as well as the **AstroChart** SVG drawing library by @Kibo.
+Uses **Circular Natal Horoscope JS** astrological calculations library by @0xStarcat, as well as the **AstroChart** SVG drawing library by @Kibo, astro glyphs by @lfborjas.
 
 **See it live at** [https://ilyai.github.io/quick-astro-charts](https://ilyai.github.io/quick-astro-charts).

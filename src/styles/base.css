@@ -78,6 +78,11 @@ select, input {
   padding: 0.1em 0.25em;
 }
 
+input[type="color"] {
+  max-height: 3em;
+  max-width: 4em;
+}
+
 input[type="color"]::-webkit-color-swatch {
   border-color: transparent;
   border-radius: .1em;

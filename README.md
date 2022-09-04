@@ -12,7 +12,7 @@ The goal is to provide a lightweight, flexible and simple to use app for astrolo
 * Support of Radix and Transit chart types
 * All the settings are optional and kept in the URL
 * Refined visual appearance and custom theme support
-* Uses IP based Geolocation and HTML5 Geolocation API
+* Uses IP based geolocation and HTML5 Geolocation API
 * Uses [Moshier](http://www.moshier.net/) Ephemeris ES6 Re-implementation, inaccuracy < 1°, applicable at -3000 B.C.E - 3000 C.E.
 
 ## Settings
@@ -38,11 +38,11 @@ The following options can be modified by using the settings dialog:
 * Origin (Radix) *(current time and place by default)*:
   * Date
   * Time *(12:00 by default)*
-  * Place *(Latitude and longitude: two float numbers with a dot separated by a comma)*
+  * Place *(latitude and longitude: two float numbers with a dot separated by a comma)*
 * Transit *(current time and place by default)*:
   * Date
   * Time *(12:00 by default)*
-  * Place *(Latitude and longitude: two float numbers with a dot separated by a comma)*
+  * Place *(latitude and longitude: two float numbers with a dot separated by a comma)*
 * Auxiliary *(extra settings)*:
   * Background *(background color for custom two-color mode)*
   * Foreground *(foreground color for custom two-color mode)*

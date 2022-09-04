@@ -115,7 +115,7 @@ function onGeolocate(e) {
   const button = e.currentTarget;
   e.preventDefault();
   displayLoadingButton(button, true);
-  const placeInput = button.parentElement.querySelector('input.place');
+  const placeInput = button.parentElement.parentElement.querySelector('input.place');
   navigator.geolocation.getCurrentPosition((position) => {
     const coords = [position.coords.latitude, position.coords.longitude].join(',');
     placeInput.value = coords;

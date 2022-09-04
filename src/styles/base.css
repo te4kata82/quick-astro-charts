@@ -91,6 +91,14 @@ input[type="checkbox"] {
   margin: 0;
 }
 
+input[type="date"] {
+  max-width: 8em;
+}
+
+input[type="time"] {
+  max-width: 7em;
+}
+
 .hidden {
   display: none !important;
 }

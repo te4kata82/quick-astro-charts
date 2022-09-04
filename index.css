@@ -91,6 +91,14 @@ input[type="checkbox"] {
   margin: 0;
 }
 
+input[type="date"] {
+  max-width: 8em;
+}
+
+input[type="time"] {
+  max-width: 7em;
+}
+
 .hidden {
   display: none !important;
 }
@@ -323,35 +331,54 @@ input[type="checkbox"] {
   flex-grow: 1;
 }
 
+#settings section.origin fieldset:nth-child(3),
+#settings section.transit fieldset:nth-child(3) {
+  flex-direction: row;
+  flex-grow: 1;
+  gap: .5em;
+}
+
 #settings section.aux fieldset {
   flex-direction: row;
   justify-content: space-between;
   flex-grow: 1;
+  gap: 1em;
+}
+
+#settings section.aux label:nth-of-type(3) {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+}
+
+#settings .geolocate-wrapper {
+  margin: auto;
 }
 
 #settings button.geolocate {
-  margin-top: 0.6em;
   padding: 0;
-  width: 3em;
   display: flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 #settings button.geolocate svg {
-  max-width: 3em;
-  max-height: 3em;
+  width: 1.5em;
+  height: 1.5em;
+  scale: .9;
 }
 
 #settings button.geolocate.loading::before {
   content: "";
   background-color: var(--primary-fg-color);
-  width: .2em;
-  height: .2em;
+  width: .1em;
+  height: .1em;
   border-radius: 50%;
   position: absolute;
   margin: auto;
+  inset: 0;
   animation: blink 1s step-start 0s infinite;
 }
 

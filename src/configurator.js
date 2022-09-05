@@ -165,14 +165,20 @@ function onTypeChange(e) {
 
 async function onSubmit(e) {
   e.preventDefault();
-  displayLoader(true);
-  const formData = new FormData(e.target);
-  const paramsObj = formDataToParams(formData);
-  const paramsEntries = Object.entries(paramsObj);
-  const searchParams = new URLSearchParams(paramsObj);
-  history.pushState(paramsEntries, '', `?${searchParams}`);
-  onChange(await getParameters(paramsEntries));
-  onClose();
+  try {
+    displayLoader(true);
+    const formData = new FormData(e.target);
+    const paramsObj = formDataToParams(formData);
+    const paramsEntries = Object.entries(paramsObj);
+    const searchParams = new URLSearchParams(paramsObj);
+    history.pushState(paramsEntries, '', `?${searchParams}`);
+    onChange(await getParameters(paramsEntries));
+    onClose();
+  } catch (e) {
+    alert(e);
+    console.error(e);
+    displayLoader(false);
+  }
 }
 
 async function onPopState(e) {

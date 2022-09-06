@@ -2,7 +2,7 @@ import { calculate } from "./processor";
 import * as chart from "./chart";
 import * as text from "./text";
 import * as configurator from "./configurator";
-import { applyTheme, displayLoader, getCurrentTime, isTransit } from "./utils";
+import { applyTheme, displayErrorPage, displayLoader, getCurrentTime, isTransit, withErrorHandling } from "./utils";
 
 import "./styles/base.css";
 import "./styles/spinner.css";
@@ -35,7 +35,7 @@ function run({ origin, transit, settings }) {
   applyTheme(settings.stroke, settings.bg);
   displayLoader(false);
 
-  function updateChart(currentTime) {
+  const updateChart = withErrorHandling((currentTime) => {
     if (isTransit(settings)) {
       dataTransit = calculate({ ...transit, ...currentTime }, settings);
     } else {
@@ -43,21 +43,16 @@ function run({ origin, transit, settings }) {
     }
     text.displayTime(dataRadix, dataTransit, settings);
     chart.draw(dataRadix, dataTransit, settings);
-  }
+  }, displayErrorPage);
 
   if (origin.isCurrentTime || (isTransit(settings) && transit.isCurrentTime)) {
     chartUpdater = setInterval(() => updateChart(getCurrentTime(), settings), UPDATE_INTERVAL);
   }
 }
 
-(async () => {
-  try {
-    text.init();
-    chart.init();
-    configurator.init(run);
-    run(await configurator.getParameters(new URLSearchParams(window.location.search)));
-  } catch (e) {
-    console.error(e);
-    alert(e);
-  }
-})();
+withErrorHandling(async () => {
+  text.init();
+  chart.init();
+  configurator.init(run);
+  run(await configurator.getParameters(new URLSearchParams(window.location.search)));
+}, displayErrorPage)();

@@ -1,4 +1,4 @@
-import { disableControls, displayLoader, displayLoadingButton, getCurrentLocation, getCurrentOrigin, getCurrentTime, getSearchParams, parseDate, parsePlace, parseTime, triggerEvent } from "./utils";
+import { disableControls, displayErrorPage, displayLoader, displayLoadingButton, geolocate, getCurrentLocation, getCurrentOrigin, getCurrentTime, getSearchParams, parseDate, parsePlace, parseTime, triggerEvent, truncateFloat, withErrorHandling } from "./utils";
 
 const DEFAULT_SETTINGS = {
   houseSystem: "placidus",
@@ -120,13 +120,12 @@ function onGeolocate(e) {
   e.preventDefault();
   displayLoadingButton(button, true);
   const placeInput = button.parentElement.parentElement.querySelector('input.place');
-  navigator.geolocation.getCurrentPosition((position) => {
-    const coords = [position.coords.latitude, position.coords.longitude].join(',');
-    placeInput.value = coords;
+  geolocate().then(({ latitude, longitude }) => {
+    placeInput.value = [latitude, longitude].join(',');
     displayLoadingButton(button, false);
-  }, (err) => {
-    console.error(err);
+  }).catch(err => {
     alert(err.message);
+    console.error(err);
     displayLoadingButton(button, false);
   });
 }
@@ -167,28 +166,28 @@ function onTypeChange(e) {
   );
 }
 
-async function onSubmit(e) {
-  e.preventDefault();
-  try {
-    displayLoader(true);
-    const formData = new FormData(e.target);
-    const paramsObj = formDataToParams(formData);
-    const paramsEntries = Object.entries(paramsObj);
-    const searchParams = new URLSearchParams(paramsObj);
-    history.pushState(paramsEntries, '', `?${searchParams}`);
-    onChange(await getParameters(paramsEntries));
-    onClose();
-  } catch (e) {
-    alert(e);
-    console.error(e);
-    displayLoader(false);
-  }
-}
+const onPlaceChange = withErrorHandling((e) => {
+  if (!e.target.value) return;
+  const coords = parsePlace(e.target.value);
+  e.target.value = `${coords.latitude},${coords.longitude}`;
+});
 
-async function onPopState(e) {
+const onSubmit = withErrorHandling(async (e) => {
+  e.preventDefault();
+  displayLoader(true);
+  const formData = new FormData(e.target);
+  const paramsObj = formDataToParams(formData);
+  const paramsEntries = Object.entries(paramsObj);
+  const searchParams = new URLSearchParams(paramsObj);
+  history.pushState(paramsEntries, '', `?${searchParams}`);
+  onChange(await getParameters(paramsEntries));
+  onClose();
+});
+
+const onPopState = withErrorHandling(async (e) => {
   displayLoader(true);
   onChange(await getParameters(e.state ?? []));
-}
+}, displayErrorPage);
 
 export function init(changeHandler) {
   onChange = changeHandler;
@@ -198,6 +197,8 @@ export function init(changeHandler) {
   settingsEl.querySelector('form').addEventListener('submit', onSubmit);
   settingsEl.querySelector('button.close').addEventListener('click', onClose);
   settingsEl.querySelector('button.reset').addEventListener('click', onReset);
+  settingsEl.querySelector('[name="place"]').addEventListener('change', onPlaceChange);
+  settingsEl.querySelector('[name="tplace"]').addEventListener('change', onPlaceChange);
   settingsEl.querySelectorAll('button.geolocate').forEach(_ => _.addEventListener('click', onGeolocate));
   settingsEl.querySelectorAll('[name="mode"]').forEach(_ => _.addEventListener('change', onModeChange));
   settingsEl.querySelectorAll('[name="type"]').forEach(_ => _.addEventListener('change', onTypeChange));

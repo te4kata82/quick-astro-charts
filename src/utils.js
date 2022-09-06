@@ -32,9 +32,26 @@ export async function getCurrentLocation() {
     sessionStorage.qacIpInfo = JSON.stringify(ipInfo);
     return parseLocation(ipInfo);
   } catch (e) {
-    alert(`Location autodetection error: ${e}`);
-    throw e;
+    console.error(`IP Geolocation error: ${e}`);
+    try {
+      return await geolocate();
+    } catch (e) {
+      console.error(`HTML5 Geolocation error: ${e.message}`);
+      alert(`Geolocation error: ${e.message}`);
+      return { latitude: 0.0, longitude: 0.0 };
+    }
   }
+}
+
+export async function geolocate() {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const [latitude, longitude] = [position.coords.latitude, position.coords.longitude].map(truncateFloat);
+      resolve({ latitude, longitude });
+    }, (err) => {
+      reject(err);
+    });
+  });
 }
 
 export function getCurrentTime() {
@@ -91,13 +108,18 @@ export function parseTime(str) {
 export function parsePlace(str) {
   const pieces = str.split(',');
   const place = {
-    latitude: Number.parseFloat(pieces[0]),
-    longitude: Number.parseFloat(pieces[1]),
+    latitude: truncateFloat(Number.parseFloat(pieces[0])),
+    longitude: truncateFloat(Number.parseFloat(pieces[1])),
   };
   if (pieces.length !== 2 || Object.values(place).some(v => !Number.isFinite(v))) {
-    throw Error(`Cannot parse place: ${str}`);
+    throw Error(`Cannot parse coordinates (lat,lng): ${str}`);
   }
   return place;
+}
+
+export function truncateFloat(value) {
+  if (!Number.isFinite(value)) return value;
+  return Number.parseFloat(value.toFixed(5));
 }
 
 export function isCosmogram(settings) {
@@ -109,11 +131,30 @@ export function isTransit(settings) {
 }
 
 export function displayLoader(display) {
-  const spinner = document.getElementById('spinner-overlay');
-  const hiddenNow = spinner.classList.contains('hidden');
-  if (display && hiddenNow) {
+  const spinnerOverlay = document.getElementById('spinner-overlay');
+  const spinner = spinnerOverlay.querySelector('.spinner');
+  const error = spinnerOverlay.querySelector('.error');
+  if (display) {
+    if (!error.classList.contains('hidden')) {
+      error.classList.add('hidden');
+    }
     spinner.classList.remove('hidden');
-  } else if (!display && !hiddenNow) {
+    spinnerOverlay.classList.remove('hidden');
+  } else if (!display && !spinnerOverlay.classList.contains('hidden')) {
+    spinnerOverlay.classList.add('hidden');
+  }
+}
+
+export function displayErrorPage(message) {
+  const spinnerOverlay = document.getElementById('spinner-overlay');
+  const spinner = spinnerOverlay.querySelector('.spinner');
+  const error = spinnerOverlay.querySelector('.error');
+  error.querySelector('.message').textContent = message ?? '';
+  error.classList.remove('hidden');
+  if (spinnerOverlay.classList.contains('hidden')) {
+    spinnerOverlay.classList.remove('hidden');
+  }
+  if (!spinner.classList.contains('hidden')) {
     spinner.classList.add('hidden');
   }
 }
@@ -152,4 +193,19 @@ export function applyTheme(fgColor, bgColor) {
   document.documentElement.style.setProperty('--lighter-fg-color', fgColor ?? '#90A4AE');
   document.documentElement.style.setProperty('--primary-bg-color', bgColor ?? '#FFFFFF');
   document.documentElement.style.colorScheme = fgColor === bgColor || isLightColor(bgColor) ? 'light' : 'dark';
+}
+
+export function withErrorHandling(f, handler = undefined) {
+  return async (...args) => {
+    try {
+      await f(...args);
+    } catch (e) {
+      console.error(e);
+      if (handler) handler(e);
+      else {
+        alert(e);
+        displayLoader(false);
+      }
+    }
+  };
 }

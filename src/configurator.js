@@ -45,6 +45,10 @@ let settingsEl, settingsButtonEl, onChange;
       default: {
         if (Object.keys(DEFAULT_SETTINGS).includes(k)) {
           settings[k] = v;
+        } else if (k === 'fbclid') {
+          const filteredEntries = Array.from(entries).filter(kv => kv[0] !== 'fbclid');
+          location.assign(`?${new URLSearchParams(filteredEntries)}`);
+          return {};
         } else {
           throw Error(`Unknown parameter: ${k}`);
         }

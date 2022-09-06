@@ -15,6 +15,7 @@ let chartUpdater;
 function run({ origin, transit, settings }) {
   console.debug("run(%o)", { origin, transit, settings });
   displayLoader(true);
+  if (!origin || !settings) return;
 
   if (chartUpdater) {
     clearInterval(chartUpdater);

@@ -1,6 +1,6 @@
 {
   "name": "quick-astro-charts",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A webapp for quickly creating and displaying Western astrological charts",
   "directories": {
     "lib": "lib"
@@ -21,6 +21,8 @@
   "author": "ilyai",
   "license": "ISC",
   "dependencies": {
+    "@sentry/browser": "^7.12.1",
+    "@sentry/tracing": "^7.12.1",
     "circular-natal-horoscope-js": "^1.1.0"
   },
   "devDependencies": {

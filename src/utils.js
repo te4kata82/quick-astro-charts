@@ -204,12 +204,12 @@ export function withErrorHandling(f, handler = undefined) {
     try {
       await f(...args);
     } catch (e) {
-      console.error(e);
       if (handler) handler(e);
       else {
         alert(e);
         displayLoader(false);
       }
+      throw e;
     }
   };
 }

@@ -1,6 +1,7 @@
 import { calculate } from "./processor";
 import * as chart from "./chart";
 import * as text from "./text";
+import * as monitoring from "./monitoring";
 import * as configurator from "./configurator";
 import { applyTheme, displayErrorPage, displayLoader, getCurrentTime, isTransit, withErrorHandling } from "./utils";
 
@@ -13,7 +14,7 @@ const UPDATE_INTERVAL = 1000;
 let chartUpdater;
 
 function run({ origin, transit, settings }) {
-  console.debug("run(%o)", { origin, transit, settings });
+  console.debug(`run(${JSON.stringify({ origin, transit, settings })})`);
   displayLoader(true);
   if (!origin || !settings) return;
 
@@ -51,6 +52,7 @@ function run({ origin, transit, settings }) {
 }
 
 withErrorHandling(async () => {
+  monitoring.init();
   text.init();
   chart.init();
   configurator.init(run);

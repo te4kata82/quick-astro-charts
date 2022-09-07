@@ -1,4 +1,4 @@
-import { disableControls, displayErrorPage, displayLoader, displayLoadingButton, geolocate, getCurrentLocation, getCurrentOrigin, getCurrentTime, getSearchParams, parseDate, parsePlace, parseTime, triggerEvent, truncateFloat, withErrorHandling } from "./utils";
+import { disableControls, displayErrorPage, displayLoader, displayLoadingButton, geolocate, getCurrentLocation, getCurrentOrigin, getCurrentTime, getSearchParams, hasNumericProps, parseDate, parsePlace, parseTime, triggerEvent, truncateFloat, withErrorHandling } from "./utils";
 
 const DEFAULT_SETTINGS = {
   houseSystem: "placidus",
@@ -58,27 +58,29 @@ let settingsEl, settingsButtonEl, onChange;
   if (Object.keys(origin).length === 0) {
     origin = await getCurrentOrigin();
   } else {
-    if (!origin.latitude && !origin.longitude) {
+    if (!hasNumericProps(origin, ['latitude','longitude'])) {
       Object.assign(origin, await getCurrentLocation());
     }
-    if (!origin.year && !origin.month && !origin.date) {
+    if (!hasNumericProps(origin, ['year','month','date'])) {
       Object.assign(origin, getCurrentTime());
     }
-    if (!origin.hour && !origin.minute) {
+    if (!hasNumericProps(origin, ['hour','minute'])) {
       Object.assign(origin, { hour: 12, minute: 0 });
     }
   }
-  if (Object.keys(transit) === 0) {
-    transit = await getCurrentOrigin();
-  } else {
-    if (!transit.latitude && !transit.longitude) {
-      Object.assign(transit, await getCurrentLocation());
-    }
-    if (!transit.year && !transit.month && !transit.date) {
-      Object.assign(transit, getCurrentTime());
-    }
-    if (!transit.hour && !transit.minute) {
-      Object.assign(transit, { hour: 12, minute: 0 });
+  if (settings.type === 'transit') {
+    if (Object.keys(transit) === 0) {
+      transit = await getCurrentOrigin();
+    } else {
+      if (!hasNumericProps(transit, ['latitude','longitude'])) {
+        Object.assign(transit, await getCurrentLocation());
+      }
+      if (!hasNumericProps(transit, ['year','month','date'])) {
+        Object.assign(transit, getCurrentTime());
+      }
+      if (!hasNumericProps(transit, ['hour','minute'])) {
+        Object.assign(transit, { hour: 12, minute: 0 });
+      }
     }
   }
   return { origin, transit, settings };

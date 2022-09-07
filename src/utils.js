@@ -122,6 +122,10 @@ export function truncateFloat(value) {
   return Number.parseFloat(value.toFixed(5));
 }
 
+export function hasNumericProps(obj, props) {
+  return props.every(p => Number.isFinite(obj[p]));
+}
+
 export function isCosmogram(settings) {
   return settings.mode === 'cosmogram';
 }

@@ -1,3 +1,5 @@
+import * as geocoder from './geocoder';
+
 /**
  * Detect current location with IP geolocation service
  * and use caching
@@ -105,14 +107,27 @@ export function parseTime(str) {
   return time;
 }
 
-export function parsePlace(str) {
-  const pieces = str.split(',');
-  const place = {
-    latitude: truncateFloat(Number.parseFloat(pieces[0])),
-    longitude: truncateFloat(Number.parseFloat(pieces[1])),
-  };
-  if (pieces.length !== 2 || Object.values(place).some(v => !Number.isFinite(v))) {
-    throw Error(`Cannot parse coordinates (lat,lng): ${str}`);
+export async function parsePlace(str) {
+  let place = {};
+  if (isCoordinates(str)) {
+    const pieces = str.split(',');
+    place = {
+      latitude: parseFloat(pieces[0]),
+      longitude: parseFloat(pieces[1]),
+    };
+    if (!hasNumericProps(place, ['latitude','longitude'])) {
+      throw Error(`Cannot parse coordinates (lat,lng): ${str}`);
+    }
+    try {
+      place = await geocoder.reverseGeocode(place);
+    } catch (e) {
+      console.error(`Cannot reverse-geocode place: ${str}`, e);
+    }
+  } else {
+    place = await geocoder.geocode(str);
+    if (!hasNumericProps(place, ['latitude','longitude'])) {
+      throw Error(`Cannot geocode place: ${str}`);
+    }
   }
   return place;
 }
@@ -124,6 +139,10 @@ export function truncateFloat(value) {
 
 export function hasNumericProps(obj, props) {
   return props.every(p => Number.isFinite(obj[p]));
+}
+
+export function isCoordinates(str) {
+  return /^[ ,.\d]+$/.test(str);
 }
 
 export function isCosmogram(settings) {

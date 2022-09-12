@@ -1,4 +1,4 @@
-import { disableControls, displayErrorPage, displayLoader, displayLoadingButton, geolocate, getCurrentLocation, getCurrentOrigin, getCurrentTime, getSearchParams, hasNumericProps, parseDate, parsePlace, parseTime, triggerEvent, truncateFloat, withErrorHandling } from "./utils";
+import { disableControls, displayErrorPage, displayLoader, displayLoadingButton, geolocate, getCurrentLocation, getCurrentOrigin, getCurrentTime, getSearchParams, hasNumericProps, parseDate, parsePlace, parseTime, triggerEvent, withErrorHandling } from "./utils";
 
 const DEFAULT_SETTINGS = {
   houseSystem: "placidus",
@@ -38,10 +38,10 @@ let settingsEl, settingsButtonEl, onChange;
     switch (k) {
       case 'date': Object.assign(origin, parseDate(v)); break;
       case 'time': Object.assign(origin, parseTime(v)); break;
-      case 'place': Object.assign(origin, parsePlace(v)); break;
+      case 'place': Object.assign(origin, await parsePlace(v)); break;
       case 'tdate': Object.assign(transit, parseDate(v)); break;
       case 'ttime': Object.assign(transit, parseTime(v)); break;
-      case 'tplace': Object.assign(transit, parsePlace(v)); break;
+      case 'tplace': Object.assign(transit, await parsePlace(v)); break;
       default: {
         if (Object.keys(DEFAULT_SETTINGS).includes(k)) {
           settings[k] = v;
@@ -168,12 +168,6 @@ function onTypeChange(e) {
   );
 }
 
-const onPlaceChange = withErrorHandling((e) => {
-  if (!e.target.value) return;
-  const coords = parsePlace(e.target.value);
-  e.target.value = `${coords.latitude},${coords.longitude}`;
-});
-
 const onSubmit = withErrorHandling(async (e) => {
   e.preventDefault();
   displayLoader(true);
@@ -199,8 +193,6 @@ export function init(changeHandler) {
   settingsEl.querySelector('form').addEventListener('submit', onSubmit);
   settingsEl.querySelector('button.close').addEventListener('click', onClose);
   settingsEl.querySelector('button.reset').addEventListener('click', onReset);
-  settingsEl.querySelector('[name="place"]').addEventListener('change', onPlaceChange);
-  settingsEl.querySelector('[name="tplace"]').addEventListener('change', onPlaceChange);
   settingsEl.querySelectorAll('button.geolocate').forEach(_ => _.addEventListener('click', onGeolocate));
   settingsEl.querySelectorAll('[name="mode"]').forEach(_ => _.addEventListener('change', onModeChange));
   settingsEl.querySelectorAll('[name="type"]').forEach(_ => _.addEventListener('change', onTypeChange));

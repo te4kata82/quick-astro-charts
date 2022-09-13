@@ -28,14 +28,32 @@ const DEFAULT_SETTINGS = {
   COLOR_CAPRICORN: "#66BB6A",
   COLOR_AQUARIUS: "#FFEE58",
   COLOR_PISCES: "#42A5F5",
-  ASPECTS: {
-    "conjunction": { "degree": 0, "orbit": 10, "color": "#2196F3" },
-    "sextile": { "degree": 60, "orbit": 10, "color": "#00BCD4" },
-    "square": { "degree": 90, "orbit": 10, "color": "#F44336" },
-    "trine": { "degree": 120, "orbit": 10, "color": "#4CAF50" },
-    "opposition": { "degree": 180, "orbit": 10, "color": "#FF9800" }
-  }
 };
+
+function getAspectsSettings(settings) {
+  const orbs = isTransit(settings) ?
+    {
+      conjunction: 3,
+      sextile: 3,
+      square: 3,
+      trine: 3,
+      opposition: 3,
+    } :
+    {
+      conjunction: 10,
+      sextile: 10,
+      square: 10,
+      trine: 10,
+      opposition: 10,
+    };
+  return {
+    conjunction: { degree: 0, orbit: orbs.conjunction, color: '#2196F3' },
+    sextile: { degree: 60, orbit: orbs.sextile, color: '#00BCD4' },
+    square: { degree: 90, orbit: orbs.square, color: '#F44336' },
+    trine: { degree: 120, orbit: orbs.trine, color: '#4CAF50' },
+    opposition: { degree: 180, orbit: orbs.opposition, color: '#FF9800' }
+  };
+}
 
 function getChartSettings(settings) {
   return {
@@ -61,6 +79,7 @@ function getChartSettings(settings) {
           MARGIN: 80,
           SYMBOL_SCALE: 0.8,
         } : {}),
+    ASPECTS: getAspectsSettings(settings),
   }
 }
 

@@ -75,8 +75,8 @@
 #settings button.geolocate.loading::before {
   content: "";
   background-color: var(--primary-fg-color);
-  width: .1em;
-  height: .1em;
+  width: .15em;
+  height: .15em;
   border-radius: 50%;
   position: absolute;
   margin: auto;

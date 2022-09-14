@@ -1,5 +1,5 @@
 import "./../lib/astrochart";
-import { isCosmogram, isTransit } from "./utils";
+import { debugLog, isCosmogram, isTransit } from "./utils";
 
 let chart;
 
@@ -28,23 +28,51 @@ const DEFAULT_SETTINGS = {
   COLOR_CAPRICORN: "#66BB6A",
   COLOR_AQUARIUS: "#FFEE58",
   COLOR_PISCES: "#42A5F5",
+  RADIX_ASPECTS_SETTINGS: {
+    orbits: {
+      Sun: {
+        conjunction: 12,
+        sextile: 6.5,
+        square: 10,
+        trine: 10,
+        opposition: 12,
+      },
+      Moon: {
+        conjunction: 10,
+        sextile: 6,
+        square: 8,
+        trine: 8,
+        opposition: 10,
+      },
+      Jupiter: {
+        conjunction: 8,
+        sextile: 5,
+        square: 7,
+        trine: 7,
+        opposition: 8,
+      },
+    }
+  },
+  TRANSIT_ASPECTS_SETTINGS: {
+    orbits: {},
+  }
 };
 
 function getAspectsSettings(settings) {
   const orbs = isTransit(settings) ?
     {
-      conjunction: 3,
-      sextile: 3,
-      square: 3,
-      trine: 3,
-      opposition: 3,
+      conjunction: 1,
+      sextile: 1,
+      square: 1,
+      trine: 1,
+      opposition: 1,
     } :
     {
-      conjunction: 10,
-      sextile: 10,
-      square: 10,
-      trine: 10,
-      opposition: 10,
+      conjunction: 5,
+      sextile: 5,
+      square: 5,
+      trine: 5,
+      opposition: 5,
     };
   return {
     conjunction: { degree: 0, orbit: orbs.conjunction, color: '#2196F3' },
@@ -94,7 +122,7 @@ export function init(chartSettings) {
   if (chartEl.children.length > 0) chartEl.replaceChildren();
 
   chart = new astrology.Chart('chart', 600, 600, chartSettings);
-  console.debug("astrology.Chart: %o", chart);
+  debugLog("astrology.Chart: %o", chart);
 }
 
 export function draw(dataRadix, dataTransit, settings) {
@@ -118,7 +146,9 @@ export function draw(dataRadix, dataTransit, settings) {
   if (isTransit(settings)) {
     const transit = radix.transit(dataTransit);
     transit.aspects();
+    debugLog("astrology.Chart.transit: %o", transit);
   } else {
     radix.aspects();
+    debugLog("astrology.Chart.radix: %o", radix);
   }
 }

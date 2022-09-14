@@ -14,7 +14,7 @@ const UPDATE_INTERVAL = 1000;
 let chartUpdater;
 
 function run({ origin, transit, settings }) {
-  console.debug(`run(${JSON.stringify({ origin, transit, settings })})`);
+  console.info("[Configuration] %o", { origin, transit, settings });
   displayLoader(true);
   if (!origin || !settings) return;
 

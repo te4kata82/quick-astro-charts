@@ -1,5 +1,5 @@
 import { Origin, Horoscope } from "circular-natal-horoscope-js";
-import { isCosmogram } from "./utils";
+import { debugLog, isCosmogram } from "./utils";
 
 //////////
 // Origin
@@ -68,6 +68,8 @@ export function calculate(origin, settings) {
   const cusps = isCosmogram(settings) ? DEFAULT_CUSPS : horoscope.Houses.map((cusp) => {
     return cusp.ChartPosition.StartPosition.Ecliptic.DecimalDegrees;
   });
+
+  debugLog("horoscope.Aspects: %o", horoscope.Aspects);
 
   return { horoscope, planets, cusps };
 }

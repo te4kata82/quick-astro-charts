@@ -232,3 +232,7 @@ export function withErrorHandling(f, handler = undefined) {
     }
   };
 }
+
+export function debugLog(...args) {
+  if (window.qacDebugLogging) console.debug(...args);
+}

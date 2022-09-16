@@ -30,6 +30,7 @@ const DEFAULT_SETTINGS = {
   COLOR_PISCES: "#42A5F5",
   RADIX_ASPECTS_SETTINGS: {
     orbits: {
+      ...generateOrbsFor(['As','H2','H3','Ic','H5','H6','Ds','H8','H9','Mc','H11','H12'], 1),
       Sun: {
         conjunction: 12,
         sextile: 6.5,
@@ -57,6 +58,16 @@ const DEFAULT_SETTINGS = {
     orbits: {},
   }
 };
+
+function generateOrbsFor(points, orb) {
+  return Object.fromEntries(points.map(p => [p, {
+    conjunction: orb,
+    sextile: orb,
+    square: orb,
+    trine: orb,
+    opposition: orb,
+  }]));
+}
 
 function getAspectsSettings(settings) {
   const orbs = isTransit(settings) ?
@@ -134,12 +145,20 @@ export function draw(dataRadix, dataTransit, settings) {
 
   // Aspect calculation
   // default is planet to planet, but it is possible add some important points:
-  if (settings.aspectsToAngulars && !isCosmogram(settings)) {
+  if (settings.aspectsToCusps && !isCosmogram(settings)) {
     radix.addPointsOfInterest({
       "As":[dataRadix.cusps[0]],
+      "H2":[dataRadix.cusps[1]],
+      "H3":[dataRadix.cusps[2]],
       "Ic":[dataRadix.cusps[3]],
+      "H5":[dataRadix.cusps[4]],
+      "H6":[dataRadix.cusps[5]],
       "Ds":[dataRadix.cusps[6]],
+      "H8":[dataRadix.cusps[7]],
+      "H9":[dataRadix.cusps[8]],
       "Mc":[dataRadix.cusps[9]],
+      "H11":[dataRadix.cusps[10]],
+      "H12":[dataRadix.cusps[11]],
     });
   }
 

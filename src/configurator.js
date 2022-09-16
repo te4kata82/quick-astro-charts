@@ -7,7 +7,7 @@ const DEFAULT_SETTINGS = {
   zodiac: "tropical",
   stroke: "",
   bg: "",
-  aspectsToAngulars: false,
+  aspectsToCusps: false,
 };
 
 let settingsEl, settingsButtonEl, onChange;
@@ -27,7 +27,7 @@ let settingsEl, settingsButtonEl, onChange;
  *      {string} zodiac = one of the following: ['tropical','sidereal']
  *      {string} stroke = foreground hex color
  *      {string} bg = background hex color
- *      {boolean} aspectsToAngulars = whether to draw aspects to primary angles
+ *      {boolean} aspectsToCusps = whether to draw aspects to cusps
  *    }
  *  }
  */
@@ -155,7 +155,7 @@ function onModeChange(e) {
   disableControls(
     [
       settingsEl.querySelector('[name="houseSystem"]').parentElement,
-      settingsEl.querySelector('[name="aspectsToAngulars"]').parentElement,
+      settingsEl.querySelector('[name="aspectsToCusps"]').parentElement,
     ],
     e.target.value === 'cosmogram'
   );

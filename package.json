@@ -1,6 +1,6 @@
 {
   "name": "quick-astro-charts",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A webapp for quickly creating and displaying Western astrological charts",
   "directories": {
     "lib": "lib"

@@ -15,6 +15,7 @@ The goal is to provide a lightweight, flexible and simple to use app for astrolo
 * All the settings are optional and kept in the URL
 * Refined visual appearance and custom theme support
 * Uses IP based geolocation and HTML5 Geolocation API
+* Uses LocationIQ for geocoding and reverse geocoding
 * Uses [Moshier](http://www.moshier.net/) Ephemeris ES6 Re-implementation, inaccuracy < 1°, applicable at -3000 B.C.E - 3000 C.E.
 
 ## Settings
@@ -40,18 +41,18 @@ The following options can be modified by using the settings dialog:
 * Origin (Radix) *(current time and place by default)*:
   * Date
   * Time *(12:00 by default)*
-  * Place *(latitude and longitude: two float numbers with a dot separated by a comma)*
+  * Place *(city (town, village) or latitude,longitude (two float numbers separated by a comma))*
 * Transit *(current time and place by default)*:
   * Date
   * Time *(12:00 by default)*
-  * Place *(latitude and longitude: two float numbers with a dot separated by a comma)*
+  * Place *(city (town, village) or latitude,longitude (two float numbers separated by a comma))*
 * Auxiliary *(extra settings)*:
   * Background *(background color for custom two-color mode)*
   * Foreground *(foreground color for custom two-color mode)*
-* Aspects To Primary Angles *(whether to draw aspects to AS/DS/MC/IC)*
+* Aspects To Cusps *(whether to draw aspects to houses cusps)*
 
 ## Sources
 
-Uses **Circular Natal Horoscope JS** astrological calculations library by @0xStarcat, as well as the **AstroChart** SVG drawing library by @Kibo, astro glyphs by @lfborjas.
+Uses **Circular Natal Horoscope JS** astrological calculations library by @0xStarcat, a fork of **AstroChart** SVG drawing library by @Kibo, and astro glyphs by @lfborjas.
 
 **See it live at** [https://ilyai.github.io/quick-astro-charts](https://ilyai.github.io/quick-astro-charts).

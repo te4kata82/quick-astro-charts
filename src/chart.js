@@ -130,7 +130,9 @@ export function init(chartSettings) {
   if (!chartSettings) return;
 
   const chartEl = document.getElementById('chart');
-  if (chartEl.children.length > 0) chartEl.replaceChildren();
+  if (chartEl.children.length > 0) {
+    while (chartEl.firstChild) chartEl.removeChild(chartEl.lastChild);
+  }
 
   chart = new astrology.Chart('chart', 600, 600, chartSettings);
   debugLog("astrology.Chart: %o", chart);

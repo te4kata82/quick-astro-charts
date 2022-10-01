@@ -82,7 +82,7 @@ export function getSearchParams() {
 }
 
 export function parseDate(str) {
-  const pieces = str.split('-');
+  const pieces = (str.includes('.') ? str.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1') : str).split('-');
   const month = Number.parseInt(pieces[1]);
   const date = {
     year: Number.parseInt(pieces[0]),

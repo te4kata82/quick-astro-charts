@@ -6,4 +6,6 @@
 
 //! moment-timezone.js
 
-//! version : 0.5.26
+//! moment.js
+
+//! version : 0.5.40

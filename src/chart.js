@@ -86,11 +86,11 @@ function getAspectsSettings(settings) {
       opposition: 5,
     };
   return {
-    conjunction: { degree: 0, orbit: orbs.conjunction, color: '#2196F3' },
-    sextile: { degree: 60, orbit: orbs.sextile, color: '#00BCD4' },
-    square: { degree: 90, orbit: orbs.square, color: '#F44336' },
-    trine: { degree: 120, orbit: orbs.trine, color: '#4CAF50' },
-    opposition: { degree: 180, orbit: orbs.opposition, color: '#FF9800' }
+    conjunction: { degree: 0, orbit: orbs.conjunction, color: '#ff9800' },
+    sextile: { degree: 60, orbit: orbs.sextile, color: '#4caf50' },
+    square: { degree: 90, orbit: orbs.square, color: '#f44336' },
+    trine: { degree: 120, orbit: orbs.trine, color: '#2196f3' },
+    opposition: { degree: 180, orbit: orbs.opposition, color: '#795548' }
   };
 }
 

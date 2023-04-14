@@ -51,6 +51,14 @@ The following options can be modified by using the settings dialog:
   * Foreground *(foreground color for custom two-color mode)*
 * Aspects To Cusps *(whether to draw aspects to houses cusps)*
 
+## Development
+Prerequisites are as usual, [NodeJS](https://nodejs.org/) and [NPM](https://www.npmjs.com/). The [Webpack](https://webpack.js.org/) bundler is used for building the project.
+
+1. `git clone https://github.com/ilyai/quick-astro-charts.git`
+2. `cd quick-astro-charts`
+3. `npm install`
+4. `npm run start:dev` to run in development mode (auto-rebuild on any change) or `npm run build` for production build
+
 ## Sources
 
 Uses **Circular Natal Horoscope JS** astrological calculations library by @0xStarcat, a fork of **AstroChart** SVG drawing library by @Kibo, and astro glyphs by @lfborjas.
